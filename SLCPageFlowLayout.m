@@ -34,7 +34,13 @@
         CGFloat collectionViewCenterX = proposedContentOffset.x + self.collectionView.frame.size.width*0.5;
         CGFloat minCenterX = [self getTheCenterAtt:array].center.x - collectionViewCenterX;
         //3. 补回ContentOffset，则正好将Item居中显示
-        return CGPointMake(proposedContentOffset.x + minCenterX, proposedContentOffset.y);
+        CGFloat minX = 0;
+        CGFloat maxX = self.collectionView.contentSize.width-self.collectionView.bounds.size.width;
+        if (proposedContentOffset.x>minX && proposedContentOffset.x<maxX) {
+            return CGPointMake(proposedContentOffset.x + minCenterX, proposedContentOffset.y);
+        } else {
+            return proposedContentOffset;
+        }
     } else {
         return proposedContentOffset;
     }
