@@ -27,3 +27,8 @@ SLCPageFlowLayout *layout = [[SLCPageFlowLayout alloc] init];
 ```
 
 ![3.png](https://github.com/hahajzy64/SLCPageFlowLayout/blob/master/result/3.png)
+
+
+参考<br>
+[https://github.com/DamonHu/CollectionCircleDemo](https://github.com/DamonHu/CollectionCircleDemo "https://github.com/DamonHu/CollectionCircleDemo")<br>
+[https://blog.csdn.net/sinat_27706697/article/details/45869727](https://blog.csdn.net/sinat_27706697/article/details/45869727 "https://blog.csdn.net/sinat_27706697/article/details/45869727")
