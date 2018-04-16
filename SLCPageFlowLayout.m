@@ -43,6 +43,9 @@
 //设置放大动画
 -(NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect
 {
+    if (!self.transformBlock) {
+        return [super layoutAttributesForElementsInRect:rect];
+    }
     NSArray *arr = [self getCopyOfAttributes:[super layoutAttributesForElementsInRect:rect]];
     //屏幕中线
     CGFloat centerX = self.collectionView.contentOffset.x + self.collectionView.bounds.size.width/2.0f;
@@ -54,12 +57,13 @@
         if (self.transformBlock) {
             CGAffineTransform transform = self.transformBlock(apartScale);
             attributes.transform = transform;
-        } else {
-            //把卡片移动范围固定到 -π/4到 +π/4这一个范围内
-            CGFloat scale = fabs(cos(apartScale * M_PI/4));
-            //设置cell的缩放 按照余弦函数曲线 越居中越趋近于1
-            attributes.transform = CGAffineTransformMakeScale(1.2, scale);
         }
+        //        else {
+        //            //把卡片移动范围固定到 -π/4到 +π/4这一个范围内
+        //            CGFloat scale = fabs(cos(apartScale * M_PI/4));
+        //            //设置cell的缩放 按照余弦函数曲线 越居中越趋近于1
+        //            attributes.transform = CGAffineTransformMakeScale(1.2, scale);
+        //        }
         //重置层级z轴
         attributes.zIndex = 0;
     }
