@@ -10,7 +10,7 @@
 
 @interface SLCPageFlowLayout : UICollectionViewFlowLayout
 
-@property (nonatomic, assign) BOOL isPage;
+@property (nonatomic, assign) BOOL isPage; // default YES.
 
 // 如果需要卡片重叠，设置X轴放大倍数大于1.0到卡片重叠即可。
 // apartScale: cell中心距离collectionview中心差的绝对值/collectionview宽度

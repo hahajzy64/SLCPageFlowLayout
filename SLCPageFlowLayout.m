@@ -16,6 +16,7 @@
     self = [super init];
     if (self) {
         self.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        self.isPage = YES;
     }
     return self;
 }
@@ -32,7 +33,16 @@
         NSArray *array = [self layoutAttributesForElementsInRect:contentFrame];
         //2. 计算在可视范围的距离中心线最近的Item
         CGFloat collectionViewCenterX = proposedContentOffset.x + self.collectionView.frame.size.width*0.5;
-        CGFloat minCenterX = [self getTheCenterAtt:array].center.x - collectionViewCenterX;
+        CGFloat minCenterX = 0;
+        if (ABS(velocity.x)<0.30) {
+            minCenterX = [self getTheCenterAtt:array].center.x - collectionViewCenterX;
+        } else {
+            if (velocity.x>0) {
+                minCenterX = [self getTheCenterAtt:array offsetIndex:1].center.x - collectionViewCenterX;
+            } else {
+                minCenterX = [self getTheCenterAtt:array offsetIndex:-1].center.x - collectionViewCenterX;
+            }
+        }
         //3. 补回ContentOffset，则正好将Item居中显示
         CGFloat minX = 0;
         CGFloat maxX = self.collectionView.contentSize.width-self.collectionView.bounds.size.width;
@@ -41,9 +51,8 @@
         } else {
             return proposedContentOffset;
         }
-    } else {
-        return proposedContentOffset;
     }
+    return proposedContentOffset;
 }
 
 //设置放大动画
@@ -80,12 +89,6 @@
     return arr;
 }
 
-//是否需要重新计算布局
--(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
-{
-    return true;
-}
-
 #pragma mark - private
 //防止报错 先复制attributes
 - (NSArray *)getCopyOfAttributes:(NSArray *)attributes
@@ -99,17 +102,34 @@
 
 - (UICollectionViewLayoutAttributes *)getTheCenterAtt:(NSArray *)array
 {
+    return [self getTheCenterAtt:array offsetIndex:0];
+}
+
+- (UICollectionViewLayoutAttributes *)getTheCenterAtt:(NSArray *)array offsetIndex:(NSInteger)offsetIndex
+{
     CGFloat minCenterX = CGFLOAT_MAX;
     UICollectionViewLayoutAttributes *minAttrs = [UICollectionViewLayoutAttributes new];
     minAttrs.center = CGPointZero;
     CGFloat collectionViewCenterX = self.collectionView.contentOffset.x + self.collectionView.frame.size.width*0.5;
-    for (UICollectionViewLayoutAttributes *attrs in array) {
+    
+    NSInteger centerIndex = 0;
+    for (NSInteger i=0; i<array.count; i++) {
+        UICollectionViewLayoutAttributes *attrs = array[i];
         if(ABS(attrs.center.x - collectionViewCenterX) < ABS(minCenterX)){
             minCenterX = attrs.center.x - collectionViewCenterX;
             minAttrs = attrs;
+            centerIndex = i;
         }
     }
-    return minAttrs;
+    
+    NSInteger newIndex = centerIndex+offsetIndex;
+    if (newIndex<0) {
+        newIndex = 0;
+    }
+    if (newIndex >= array.count) {
+        newIndex = array.count-1;
+    }
+    return array[newIndex];
 }
 
 @end
