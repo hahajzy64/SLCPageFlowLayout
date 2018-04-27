@@ -69,16 +69,8 @@
         CGFloat distance = fabs(attributes.center.x - centerX);
         //移动的距离和屏幕宽度的的比例
         CGFloat apartScale = distance/self.collectionView.bounds.size.width;
-        if (self.transformBlock) {
-            CGAffineTransform transform = self.transformBlock(apartScale);
-            attributes.transform = transform;
-        }
-        //        else {
-        //            //把卡片移动范围固定到 -π/4到 +π/4这一个范围内
-        //            CGFloat scale = fabs(cos(apartScale * M_PI/4));
-        //            //设置cell的缩放 按照余弦函数曲线 越居中越趋近于1
-        //            attributes.transform = CGAffineTransformMakeScale(1.2, scale);
-        //        }
+        CGAffineTransform transform = self.transformBlock(apartScale);
+        attributes.transform = transform;
         //重置层级z轴
         attributes.zIndex = 0;
     }
@@ -87,6 +79,12 @@
     attrs.zIndex = 100;
     
     return arr;
+}
+
+//是否需要重新计算布局
+-(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds
+{
+    return YES;
 }
 
 #pragma mark - private
@@ -121,15 +119,18 @@
             centerIndex = i;
         }
     }
-    
-    NSInteger newIndex = centerIndex+offsetIndex;
-    if (newIndex<0) {
-        newIndex = 0;
+    if (array.count == 0) {
+        return minAttrs;
     }
+    NSInteger newIndex = centerIndex+offsetIndex;
     if (newIndex >= array.count) {
         newIndex = array.count-1;
     }
+    if (newIndex<0) {
+        newIndex = 0;
+    }
     return array[newIndex];
 }
+
 
 @end
